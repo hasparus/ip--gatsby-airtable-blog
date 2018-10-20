@@ -1,3 +1,5 @@
+const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID } = process.env;
+
 module.exports = {
   pathPrefix: '/gatsby-hampton-theme',
   siteMetadata: {
@@ -11,8 +13,8 @@ module.exports = {
     {
       resolve: 'gatsby-source-airtable',
       options: {
-        apiKey: 'YOUR_API_KEY',
-        baseId: 'YOUR_BASE_ID',
+        apiKey: AIRTABLE_API_KEY,
+        baseId: AIRTABLE_BASE_ID,
         tableName: 'CMS',
         tableView: 'published',
         queryName: ''
