@@ -78,8 +78,8 @@ module.exports = {
             serialize: ({ query: { site, allAirtable } }) => {
               return allAirtable.edges.map(edge => {
                 return {
-                  title: edge.title,
-                  date: edge.date,
+                  title: edge.node.title,
+                  date: edge.node.date,
                   description: edge.node.PostMarkdown,
                   url: site.siteMetadata.siteUrl + edge.node.slug,
                   guid: site.siteMetadata.siteUrl + edge.node.slug
