@@ -1,9 +1,13 @@
+require('dotenv').config();
+
 const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID } = process.env;
 
 module.exports = {
-  pathPrefix: '/gatsby-hampton-theme',
+  pathPrefix: '/ip--gatsby-airtable-blog',
   siteMetadata: {
-    title: 'My Gatsby Site'
+    title: 'IP News',
+    siteUrl: 'https://example.com',
+    description: 'News'
   },
   mapping: {
     'MarkdownRemark.frontmatter.author': 'AuthorsYaml'
@@ -16,7 +20,7 @@ module.exports = {
         apiKey: AIRTABLE_API_KEY,
         baseId: AIRTABLE_BASE_ID,
         tableName: 'CMS',
-        tableView: 'published',
+        tableView: 'Published',
         queryName: ''
       }
     },
@@ -54,6 +58,57 @@ module.exports = {
     'gatsby-transformer-sharp',
     'gatsby-plugin-offline',
     'gatsby-plugin-emotion',
+    {
+      resolve: `gatsby-plugin-feed`,
+      options: {
+        query: `
+          {
+            site {
+              siteMetadata {
+                title
+                description
+                siteUrl
+                site_url: siteUrl
+              }
+            }
+          }
+        `,
+        feeds: [
+          {
+            serialize: ({ query: { site, allAirtable } }) => {
+              return allAirtable.edges.map(edge => {
+                return {
+                  title: edge.title,
+                  date: edge.date,
+                  description: edge.node.PostMarkdown,
+                  url: site.siteMetadata.siteUrl + edge.node.slug,
+                  guid: site.siteMetadata.siteUrl + edge.node.slug
+                };
+              });
+            },
+            query: `
+              {
+                allAirtable(sort: { fields: [date], order: DESC }) {
+                  edges {
+                    node {
+                      slug
+                      title
+                      PostMarkdown
+                      image {
+                        url
+                      }
+                      date
+                    }
+                  }
+                }
+              }
+            `,
+            output: '/rss.xml',
+            title: 'Gatsby RSS Feed'
+          }
+        ]
+      }
+    },
     'gatsby-plugin-react-next',
     {
       resolve: 'gatsby-plugin-typography',
